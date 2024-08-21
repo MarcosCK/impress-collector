@@ -1,6 +1,7 @@
 from tkinter import Tk, Canvas, Button, simpledialog, messagebox, ttk, Frame, Scrollbar, Frame, Scrollbar, RIGHT, Y, LEFT, BOTH, X, VERTICAL
 from db.database import *
 from exportador import *
+from config import *
 import details
 
 class PrinterApp:
@@ -35,6 +36,13 @@ class PrinterApp:
             printer_name = self.tree.item(selected_item[0])["values"][0]
             delete_printer(printer_name)
             self.load_printers()
+
+    def open_config_dialog(self):
+     config_dialog = ConfigDialog(self.root, self.update_interval)
+     self.root.wait_window(config_dialog)
+     if config_dialog.result:
+        self.update_interval = config_dialog.result
+        self.root.after(self.update_interval, self.verificacao_att)        
 
     def exportar_dados(self):
         file_type = simpledialog.askstring("Exportar Dados", "Escolha o formato de exportação (csv ou pdf):")
@@ -93,7 +101,6 @@ class PrinterApp:
                                     command=self.delete_printer)
         self.delete_button.grid(row=0, column=1, padx=20)
 
-
         self.add_button = Button(self.button_frame, 
                                   text="Exportar Dados",
                                   compound="top", 
@@ -117,14 +124,9 @@ class PrinterApp:
                                   compound="top", 
                                   font=("Poppins", 12),
                                   bg="#707070", 
-                                  fg="#FFFFFF"
-                                  )
+                                  fg="#FFFFFF",
+                                  command=self.open_config_dialog)
         self.config_button.grid(row=0, column=4, padx=20)
-
-         
-
-
-
 
         self.tree_frame = Frame(self.frame)
         self.tree_frame.pack(fill=BOTH, expand=1)
